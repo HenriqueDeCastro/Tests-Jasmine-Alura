@@ -1,58 +1,71 @@
-import { LikeWidgetModule } from './like-widget.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LikeWidgetComponent } from './like-widget.component';
+import { LikeWidgetModule } from './like-widget.module';
 
-describe('LikeWidgetComponent', () => {
-  let component: LikeWidgetComponent;
-  let fixture: ComponentFixture<LikeWidgetComponent>;
+describe(LikeWidgetComponent.name, () => {
+  let fixture: ComponentFixture<LikeWidgetComponent> = null;
+  let component: LikeWidgetComponent = null;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LikeWidgetModule]
-    })
-    .compileComponents();
-  });
+    }).compileComponents();
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(LikeWidgetComponent);
     component = fixture.componentInstance;
   });
 
-  it('should create component', () => {
+  it('Should create component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should auto-generate ID during ngOnInit when (@Input id) is not assigned', () => {
+  it('Should auto-generate ID during ngOnInit when (@Input id) is not assigned', () => {
     fixture.detectChanges();
     expect(component.id).toBeTruthy();
   });
 
-  it('should NOT auto-generate during ngOnInit when (@Input id) is assigned', () => {
-    const testId = "testId";
-    component.id = testId;
+  it('Should NOT auto-generate ID during ngOnInit when (@Input id) is assigned', () => {
+    const someId = 'someId';
+    component.id = someId;
     fixture.detectChanges();
-    expect(component.id).toBe(testId);
+    expect(component.id).toBe(someId);
   });
 
-  // ----- Testes OutPut -----
-
-  // USING SPY (Modo mais "elegante", com menos linhas)
-  it(`#${LikeWidgetComponent.prototype.like}
-    should trigger emission when called`, () => {
-    spyOn(component.liked, 'emit');
-    fixture.detectChanges();
-    component.like();
-    expect(component.liked.emit).toHaveBeenCalled();
+  it(`#${LikeWidgetComponent.prototype.like.name}
+    should trigger (@Output liked) when called`, () => {
+      spyOn(component.liked, 'emit');
+      fixture.detectChanges();
+      component.like();
+      expect(component.liked.emit).toHaveBeenCalled();
   });
 
-  // USING 'DONE' (Modo mais "rude", que consome mais linhas)
-  // it(`#${LikeWidgetComponent.prototype.like}
-  //   should trigger emission when called`, done => {
-  //   fixture.detectChanges();
-  //   component.liked.subscribe(() => {
-  //     expect(true).toBeTrue();
-  //     done();
-  //   });
-  //   component.like();
-  // });
+  it(`(D) Should display number of likes when clicked`, done => {
+    fixture.detectChanges();
+
+    component.liked.subscribe(() => {
+      component.likes++
+      fixture.detectChanges();
+      const countElement: HTMLElement = fixture.nativeElement.querySelector('.like-counter');
+      expect(countElement.textContent.trim()).toBe('1');
+      done();
+    });
+
+    const likeContainerElement: HTMLElement = fixture.nativeElement.querySelector('.like-widget-container');
+    likeContainerElement.click();
+  });
+
+  it(`(D) Should display number of likes when enter is pressed`, done => {
+    fixture.detectChanges();
+    component.liked.subscribe(() => {
+      component.likes++
+      fixture.detectChanges();
+      const countElement: HTMLElement = fixture.nativeElement.querySelector('.like-counter');
+      expect(countElement.textContent.trim()).toBe('1');
+      done();
+    });
+
+    const likeContainerElement: HTMLElement = fixture.nativeElement.querySelector('.like-widget-container');
+    const event = new KeyboardEvent('keyup', { key: 'Enter' });
+    likeContainerElement.dispatchEvent(event);
+  });
 });

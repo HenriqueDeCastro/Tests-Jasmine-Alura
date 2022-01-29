@@ -6,9 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public likes: number = 0;
 
-  public like(): void {
-    this.likes++
-  }
+  title = 'Angular testing';
 }
