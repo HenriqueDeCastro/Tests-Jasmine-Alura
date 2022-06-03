@@ -1,6 +1,6 @@
 # Tests Jasmine Karma
 
-### Description
+### Description:
 <div>
   <p>
     Project for learning unit tests in Angular with Jasmine Framework.
